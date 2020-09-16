@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+<style>
+    .calc_wrapper * {
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+    .calc_wrapper *:focus,
+    .calc_wrapper *:hover {
+        outline: none;
+    }
+    .calc_wrapper {
+        font-family: 'Roboto Condensed';
+        max-width: 768px;
+        margin: auto;
+    }
+    .calc_wrapper .card_title {
+        text-align: center;
+        font-weight: bold;
+        margin: 0 0 30px 0;
+    }
+    .block_card {
+        width: 100%;
+        border: 1px solid #e7eaf3;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        padding: 40px;
+        -webkit-transition: .3s;
+        -o-transition: .3s;
+        transition: .3s;
+        -webkit-box-shadow: 0 0.5rem 1.2rem rgba(189, 197, 209, 0.2);
+        box-shadow: 0 0.5rem 1.2rem rgba(189, 197, 209, 0.2);
+    }
+    .block_card:hover {
+        -webkit-transition: .3s;
+        -o-transition: .3s;
+        transition: .3s;
+        -webkit-box-shadow: 0 0.8rem 1.2rem rgba(189,197,209,0.3);
+        box-shadow: 0 0.8rem 1.2rem rgba(189,197,209,0.3);
+    }
+    .calc_row {
+        display: -webkit-box !important;
+        display: -ms-flexbox !important;
+        display: flex !important;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        -webkit-box-align: baseline;
+        -ms-flex-align: baseline;
+        align-items: baseline;
+    }
+    .block_card input {
+        width: 100%;
+        max-width: 130px;
+        height: 35px;
+        text-align: right;
+    }
+    .block_card input {
+        -webkit-transition: all .3s ease-in-out;
+        -o-transition: all .3s ease-in-out;
+        transition: all .3s ease-in-out;
+        font-size: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        color: black;
+        padding: 7px;
+        margin-left: 30px;
+        -webkit-box-shadow: 0 0.5rem 1.2rem rgba(189,197,209,0.2);
+        box-shadow: 0 0.5rem 1.2rem rgba(189,197,209,0.2);
+    }
+    .block_card input:focus,
+    .block_card select:focus {
+        -webkit-transition: all .3s ease-in-out;
+        -o-transition: all .3s ease-in-out;
+        transition: all .3s ease-in-out;
+        border-color: #000;
+    }
+    .calc_row .card_title {
+        width: 35%;
+    }
+    .calc_price {
+        text-align: center;
+        font-size: 23px;
+    }
+</style>
+
+<div class="calc_wrapper">
+    <div class="calc">
+        <div class="block_card payback">
+            <div class="calc_row">
+                <p class="card_title">Количество пациентов в день</p>
+                <input type="text" class="count_pacient" value="0">
+            </div>
+            <div class="calc_row">
+                <p class="card_title">Прибыль на одного пациента</p>
+                <input type="text" class="remains" value="0">
+            </div>
+            <div class="calc_row calc_result">
+                <p class="card_title">Окупаемость:</p>
+                <p class="calc_price"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var result = document.querySelector('.calc_result .calc_price');
+    var countPacient = document.querySelector('.count_pacient');  // Количество пациентов в день
+    var remains = document.querySelector('.remains');  // Прибыль на одного пациента
+    if (remains && countPacient) {
+        remains.addEventListener('input', function (e) {
+            if (!e.target.value.length) {
+                e.target.value = 0;
+            }
+            var str = e.target.value;
+            e.target.value = str.toString().replace(/[A-Za-zА-Яа-яЁё]/, '').replace(/\s/g, '').replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ').replace(/^[0|\s]*/, '');
+            calc();
+        });
+        countPacient.addEventListener('input', function (e) {
+            if (!e.target.value.length) {
+                e.target.value = 0;
+            }
+            var str = e.target.value;
+            e.target.value = str.toString().replace(/[A-Za-zА-Яа-яЁё]/, '').replace(/\s/g, '').replace(/^[0|\s]*/, '');
+            calc();
+        });
+    }
+    function calc() {
+        var sum = parseInt((7000 / (parseInt(countPacient.value) * 0.07 * parseInt(remains.value.replace(/\s/g, '')))).toFixed(0));
+        if (!countPacient.value || parseInt(countPacient.value) === 0 || parseInt(remains.value.replace(/\s/g, '')) === 0 || sum < 1) {
+            sum = 0;
+        }
+        result.innerHTML = sum + " дней";
+    }
+    window.addEventListener('load', function (e) {
+        result ? calc() : false;
+    });
+</script>
+
+</body>
+</html>
