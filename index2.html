@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+<style>
+    .calc_wrapper * {
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+    .calc_wrapper *:focus,
+    .calc_wrapper *:hover {
+        outline: none;
+    }
+    .calc_wrapper {
+        font-family: 'Roboto Condensed';
+        max-width: 768px;
+        margin: auto;
+    }
+    .calc_wrapper .card_title {
+        text-align: center;
+        font-weight: bold;
+        margin: 0 0 30px 0;
+    }
+
+    .block_card {
+        width: 100%;
+        border: 1px solid #e7eaf3;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        padding: 40px;
+        -webkit-transition: .3s;
+        -o-transition: .3s;
+        transition: .3s;
+        -webkit-box-shadow: 0 0.5rem 1.2rem rgba(189, 197, 209, 0.2);
+        box-shadow: 0 0.5rem 1.2rem rgba(189, 197, 209, 0.2);
+    }
+    .block_card:hover {
+        -webkit-transition: .3s;
+        -o-transition: .3s;
+        transition: .3s;
+        -webkit-box-shadow: 0 0.8rem 1.2rem rgba(189,197,209,0.3);
+        box-shadow: 0 0.8rem 1.2rem rgba(189,197,209,0.3);
+    }
+
+    .calc_row {
+        display: -webkit-box !important;
+        display: -ms-flexbox !important;
+        display: flex !important;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        -webkit-box-align: baseline;
+        -ms-flex-align: baseline;
+        align-items: baseline;
+    }
+
+    .block_card input {
+        width: 100%;
+        max-width: 130px;
+        height: 35px;
+        text-align: right;
+    }
+
+    .block_card input {
+        -webkit-transition: all .3s ease-in-out;
+        -o-transition: all .3s ease-in-out;
+        transition: all .3s ease-in-out;
+        font-size: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        color: black;
+        padding: 7px;
+        margin-left: 30px;
+        -webkit-box-shadow: 0 0.5rem 1.2rem rgba(189,197,209,0.2);
+        box-shadow: 0 0.5rem 1.2rem rgba(189,197,209,0.2);
+    }
+    .block_card input:focus,
+    .block_card select:focus {
+        -webkit-transition: all .3s ease-in-out;
+        -o-transition: all .3s ease-in-out;
+        transition: all .3s ease-in-out;
+        border-color: #000;
+    }
+    .calc_row .card_title {
+        width: 35%;
+    }
+
+    .calc_price {
+        text-align: center;
+        font-size: 23px;
+    }
+    .pp_checkbox {
+        display: block;
+        line-height: 1;
+        padding: 0 0 0 25px;
+        position: relative;
+        cursor: pointer;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        margin: 15px 0;
+    }
+    .pp_checkbox:before {
+        content: "";
+        display: block;
+        width: 15px;
+        height: 15px;
+        border: 2px solid #333;
+        border-radius: 15%;
+        position: absolute;
+        top: -3px; bottom: 0; left: 0;
+        margin: auto;
+    }
+    .pp_checkbox.checked:after {
+        content: "";
+        display: block;
+        width: 10px;
+        height: 10px;
+        border: 2px solid transparent;
+        background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNTEyIiB2aWV3Qm94PSIwIC00NiA0MTcuODEzMzMgNDE3IiB3aWR0aD0iNTEyIj48Zz48cGF0aCBkPSJtMTU5Ljk4ODI4MSAzMTguNTgyMDMxYy0zLjk4ODI4MSA0LjAxMTcxOS05LjQyOTY4NyA2LjI1LTE1LjA4MjAzMSA2LjI1cy0xMS4wOTM3NS0yLjIzODI4MS0xNS4wODIwMzEtNi4yNWwtMTIwLjQ0OTIxOS0xMjAuNDY4NzVjLTEyLjUtMTIuNS0xMi41LTMyLjc2OTUzMSAwLTQ1LjI0NjA5M2wxNS4wODIwMzEtMTUuMDg1OTM4YzEyLjUwMzkwNy0xMi41IDMyLjc1LTEyLjUgNDUuMjUgMGw3NS4xOTkyMTkgNzUuMjAzMTI1IDIwMy4xOTkyMTktMjAzLjIwMzEyNWMxMi41MDM5MDYtMTIuNSAzMi43Njk1MzEtMTIuNSA0NS4yNSAwbDE1LjA4MjAzMSAxNS4wODU5MzhjMTIuNSAxMi41IDEyLjUgMzIuNzY1NjI0IDAgNDUuMjQ2MDkzem0wIDAiIGRhdGEtb3JpZ2luYWw9IiMwMDAwMDAiIGNsYXNzPSJhY3RpdmUtcGF0aCIgc3R5bGU9ImZpbGw6IzMzMzMzMyIgZGF0YS1vbGRfY29sb3I9IiMwMDAwMDAiPjwvcGF0aD48L2c+IDwvc3ZnPg==);
+        background-size: contain;
+        background-repeat: no-repeat;
+        position: absolute;
+        top: -2px; bottom: 0; left: 2px;
+        margin: auto;
+    }
+
+    .calc_info {
+        display: inline-block;
+        width: 15px;
+        height: 15px;
+        background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnN2Z2pzPSJodHRwOi8vc3ZnanMuY29tL3N2Z2pzIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgeD0iMCIgeT0iMCIgdmlld0JveD0iMCAwIDUxMiA1MTIiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDUxMiA1MTIiIHhtbDpzcGFjZT0icHJlc2VydmUiIGNsYXNzPSIiPjxnPgo8ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgoJPGc+CgkJPGc+CgkJCTxjaXJjbGUgY3g9IjI1NiIgY3k9IjM3OC41IiByPSIyNSIgZmlsbD0iIzk5OTk5OSIgZGF0YS1vcmlnaW5hbD0iIzAwMDAwMCIgc3R5bGU9IiIgY2xhc3M9IiI+PC9jaXJjbGU+CgkJCTxwYXRoIGQ9Ik0yNTYsMEMxMTQuNTE2LDAsMCwxMTQuNDk3LDAsMjU2YzAsMTQxLjQ4NCwxMTQuNDk3LDI1NiwyNTYsMjU2YzE0MS40ODQsMCwyNTYtMTE0LjQ5NywyNTYtMjU2ICAgICBDNTEyLDExNC41MTYsMzk3LjUwMywwLDI1NiwweiBNMjU2LDQ3MmMtMTE5LjM3NywwLTIxNi05Ni42MDctMjE2LTIxNmMwLTExOS4zNzcsOTYuNjA3LTIxNiwyMTYtMjE2ICAgICBjMTE5LjM3NywwLDIxNiw5Ni42MDcsMjE2LDIxNkM0NzIsMzc1LjM3NywzNzUuMzkzLDQ3MiwyNTYsNDcyeiIgZmlsbD0iIzk5OTk5OSIgZGF0YS1vcmlnaW5hbD0iIzAwMDAwMCIgc3R5bGU9IiIgY2xhc3M9IiI+PC9wYXRoPgoJCQk8cGF0aCBkPSJNMjU2LDEyOC41Yy00NC4xMTIsMC04MCwzNS44ODgtODAsODBjMCwxMS4wNDYsOC45NTQsMjAsMjAsMjBzMjAtOC45NTQsMjAtMjBjMC0yMi4wNTYsMTcuOTQ0LTQwLDQwLTQwICAgICBjMjIuMDU2LDAsNDAsMTcuOTQ0LDQwLDQwYzAsMjIuMDU2LTE3Ljk0NCw0MC00MCw0MGMtMTEuMDQ2LDAtMjAsOC45NTQtMjAsMjB2NTBjMCwxMS4wNDYsOC45NTQsMjAsMjAsMjAgICAgIGMxMS4wNDYsMCwyMC04Ljk1NCwyMC0yMHYtMzIuNTMxYzM0LjQ2Ni04LjkwMyw2MC00MC4yNiw2MC03Ny40NjlDMzM2LDE2NC4zODgsMzAwLjExMiwxMjguNSwyNTYsMTI4LjV6IiBmaWxsPSIjOTk5OTk5IiBkYXRhLW9yaWdpbmFsPSIjMDAwMDAwIiBzdHlsZT0iIiBjbGFzcz0iIj48L3BhdGg+CgkJPC9nPgoJPC9nPgo8L2c+CjxnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjwvZz4KPGcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPC9nPgo8ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8L2c+CjxnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjwvZz4KPGcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPC9nPgo8ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8L2c+CjxnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjwvZz4KPGcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPC9nPgo8ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8L2c+CjxnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjwvZz4KPGcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPC9nPgo8ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8L2c+CjxnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjwvZz4KPGcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPC9nPgo8ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8L2c+CjwvZz48L3N2Zz4=);
+        background-size: contain;
+        background-repeat: no-repeat;
+        margin-left: 5px;
+        margin-bottom: -3px;
+    }
+    .health_list {
+        display: none;
+        list-style: none;
+        padding: 0;
+    }
+    .health_list.active {
+        display: inline-block;
+    }
+    .health_list li{
+        margin-bottom: 5px;
+    }
+    .health_list li:hover{
+        font-weight: bold;
+    }
+</style>
+
+<div class="calc_wrapper">
+    <div class="calc">
+        <div class="block_card payback">
+            <div class="calc_row">
+                <p class="card_title">Ваш годовой доход:</p>
+                <input type="text" class="income" value="0">
+            </div>
+            <div class="calc_row">
+                <p class="card_title">Сумма оплаты за лечение:</p>
+                <input type="text" class="remains" value="0">
+            </div>
+            <div class="calc_row calc_result_refund">
+                <p class="card_title">Уплаченный НДФЛ:</p>
+                <p class="calc_price_payment_ndfl"></p>
+            </div>
+            <div class="calc_row calc_result_refund">
+                <p class="card_title">Возвращаемый НДФЛ:</p>
+                <p class="calc_price_refund_ndfl"></p>
+            </div>
+            <div class="calc_row">
+                <p class="card_title">Сумма возврата:</p>
+                <p class="calc_price_refund"></p>
+            </div>
+            <div class="calc_row">
+                <div class="pp_checkbox calc_health" data-value="15000"><span>Дорогостоящее лечение</span><span class="calc_info"></span></div>
+            </div>
+            <ul class="health_list">
+                <li>1. Хирургическое лечение врожденных аномалий (пороков развития). </li>
+                <li>2. Хирургическое лечение тяжелых форм болезней системы кровообращения, включая операции с использованием аппаратов искусственного кровообращения, лазерных технологий и коронарной ангиографии. </li>
+                <li>3. Хирургическое лечение тяжелых форм болезней органов дыхания. </li>
+                <li>4. Хирургическое лечение тяжелых форм болезней и сочетанной патологии глаза и его придаточного аппарата, в том числе с использованием эндолазерных технологий. </li>
+                <li>5. Хирургическое лечение тяжелых форм болезней нервной системы, включая микронейрохирургические и эндовазальные вмешательства. </li>
+                <li>6. Хирургическое лечение осложненных форм болезней органов пищеварения. </li>
+                <li>7. Эндопротезирование и реконструктивно-восстановительные операции на суставах. </li>
+                <li>8. Трансплантация органов (комплекса органов), тканей и костного мозга. </li>
+                <li>9. Реплантация, имплантация протезов, металлических конструкций, электрокардиостимуляторов и электродов. </li>
+                <li>10. Реконструктивные, пластические и реконструктивно-пластические операции. </li>
+                <li>11. Терапевтическое лечение хромосомных нарушений и наследственных болезней. </li>
+                <li>12. Терапевтическое лечение злокачественных новообразований щитовидной железы и других эндокринных желез, в том числе с использованием протонной терапии. </li>
+                <li>13. Терапевтическое лечение острых воспалительных полиневропатий и осложнений миастении. </li>
+                <li>14. Терапевтическое лечение системных поражений соединительной ткани. </li>
+                <li>15. Терапевтическое лечение тяжелых форм болезней органов кровообращения, дыхания и пищеварения у детей. </li>
+                <li>16. Комбинированное лечение болезней поджелудочной железы. </li>
+                <li>17. Комбинированное лечение злокачественных новообразований. </li>
+                <li>18. Комбинированное лечение наследственных нарушений свертываемости крови и апластических анемий. </li>
+                <li>19. Комбинированное лечение остеомиелита. </li>
+                <li>20. Комбинированное лечение состояний, связанных с осложненным течением беременности, родов и послеродового периода. </li>
+                <li>21. Комбинированное лечение осложненных форм сахарного диабета. </li>
+                <li>22. Комбинированное лечение наследственных болезней. </li>
+                <li>23. Комбинированное лечение тяжелых форм болезней и сочетанной патологии глаза и его придаточного аппарата. </li>
+                <li>24. Комплексное лечение ожогов с площадью поражения поверхности тела 30 процентов и более. </li>
+                <li>25. Виды лечения, связанные с использованием гемо- и перитонеального диализа. </li>
+                <li>26. Выхаживание недоношенных детей массой до 1,5 кг. </li>
+                <li>27. Лечение бесплодия методом экстракорпорального оплодотворения, культивирования и внутриматочного введения эмбриона. </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    var income = document.querySelector('.income'); // годовой доход
+    var remains = document.querySelector('.remains'); // Сумма оплаты за лечение
+    if (remains && income) {
+        remains.addEventListener('input', function (e) {
+            if (!e.target.value.length) {e.target.value = 0}
+            var str = e.target.value;
+            e.target.value = str.toString().replace(/[A-Za-zА-Яа-яЁё]/, '').replace(/\s/g, '').replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ').replace(/^[0|\s]*/, '');
+            calc();
+        });
+        income.addEventListener('input', function (e) {
+            if (!e.target.value.length) {e.target.value = 0}
+            var str = e.target.value;
+            e.target.value = str.toString().replace(/[A-Za-zА-Яа-яЁё]/, '').replace(/\s/g, '').replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ').replace(/^[0|\s]*/, '');
+            calc();
+        });
+    }
+
+    // Checkbox
+    var calcHealth = document.querySelector('.calc_health');
+    calcHealth.addEventListener('click', () => {
+        if (!calcHealth.classList.contains('calc_info')) {
+            calcHealth.classList.toggle('checked');
+            calc();
+        }
+    });
+
+
+    // info
+    let calcInfo = document.querySelector('.calc_info');
+    let infoList = document.querySelector('.health_list');
+    calcInfo.addEventListener('click', e => {
+        infoList.classList.toggle('active');
+    })
+
+    function calc() {
+        let paymentNdfl = document.querySelector('.calc_price_payment_ndfl');
+        let refundNdfl = document.querySelector('.calc_price_refund_ndfl');
+        let refund = document.querySelector('.calc_price_refund');
+
+        if (!income.value.length || !remains.value.length || parseInt(parseInt(income.value.replace(/\s/g, ''))) === 0 || parseInt(remains.value.replace(/\s/g, '')) === 0 ) {
+            paymentNdfl.innerHTML = refundNdfl.innerHTML = refund.innerHTML = '0' + ' руб.';
+        } else {
+
+            let pndfl = (parseInt(income.value.replace(/\s/g, '')) * 13 / 100).toFixed(0);
+            let rndfl = (parseInt(remains.value.replace(/\s/g, '')) * 13 / 100).toFixed(0);
+            paymentNdfl.innerHTML =  pndfl + ' руб.';
+            refundNdfl.innerHTML = rndfl + ' руб.';
+
+            // Дорогостоящее лечение не выбрано
+            if (!calcHealth.classList.contains('checked')) {
+                // Если Уплаченный НДФЛ > 15600 и Возвращаемый НДФЛ > 15600
+                if (pndfl >= 15600 && rndfl >= 15600) {
+                    refund.innerHTML = 15600 + ' руб.';
+                } else {
+                    // Если Уплаченный НДФЛ > Возвращаемого НДФЛ
+                    if (pndfl > rndfl) {
+                        refund.innerHTML = rndfl + ' руб.';
+                    }
+                    // Если Уплаченный НДФЛ < Возвращаемого НДФЛ
+                    if (pndfl < rndfl) {
+                        refund.innerHTML = pndfl + ' руб.';
+                    }
+                    if (pndfl === rndfl && pndfl < 15600) {
+                        refund.innerHTML = pndfl + ' руб.';
+                    }
+                }
+
+            // Дорогостоящее лечение выбрано
+            } else {
+                // Если Уплаченный НДФЛ > Возвращаемого НДФЛ
+                if (pndfl > rndfl) {
+                    refund.innerHTML = rndfl + ' руб.';
+                }
+                if (pndfl < rndfl) {
+                    refund.innerHTML = pndfl + ' руб.';
+                }
+                if (pndfl === rndfl) {
+                    refund.innerHTML = pndfl + ' руб.';
+                }
+            }
+
+        }
+
+
+    }
+
+    window.addEventListener('load', function (e) {
+        income && remains ? calc() : false;
+    });
+</script>
+
+
+
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript" >
+    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+    (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+    ym(65584801, "init", {
+        clickmap:true,
+        trackLinks:true,
+        accurateTrackBounce:true,
+        webvisor:true
+    });
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/65584801" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+</body>
+</html>
